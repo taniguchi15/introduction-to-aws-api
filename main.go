@@ -1,21 +1,23 @@
 package main
 
 import (
-    "net/http"
-    "github.com/labstack/echo"
-    "github.com/labstack/echo/middleware"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
+	"github.com/labstack/gommon/log"
+	"github.com/taniguchi15/compar-nuxt-react-api/api"
 )
 
-
 func main() {
-    e := echo.New()
+	e := echo.New()
 
-    e.Use(middleware.Logger())
-    e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
-    e.GET("/", func(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello World")
-    })
+	e.Logger.SetLevel(log.DEBUG)
+	//Default {"time":"${time_rfc3339_nano}","level":"${level}","prefix":"${prefix}","file":"${short_file}","line":"${line}"}
+	e.Logger.SetHeader("${time_rfc3339} [${level}] (${short_file}:${line})")
 
-    e.Start(":3000")
+	api.Route(e)
+
+	e.Start(":3000")
 }
